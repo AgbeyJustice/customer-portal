@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>ZOA TRACK Booking</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<style>
+  :root{
+    --brand:#1da383; --accent:#0066cc; --green:#00d084;
+    --bg:#f7f9fc; --card:#ffffff; --text:#1f2937; --muted:#667085; --border:#e5e7eb;
+    --dark:#0b1226;
+  }
+  html{font-size: 25px;}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:Arial, sans-serif;background:var(--bg);color:var(--text);font-size:22px}
+
+  header{background:var(--brand);color:#fff;padding:2.5rem;text-align:center;border-bottom:5px solid var(--accent)}
+  header h1{margin:0;font-size:clamp(2.2rem,5vw,3.2rem)}
+  header nav a{color:#fff;text-decoration:none;margin:0 1rem;}
+
+  main{width:100%;padding:3rem}
+  h2{text-align:center;margin-bottom:2rem;font-size:clamp(2rem,5vw,2.6rem);color:#0c3470}
+
+  .panel{
+    background:var(--card);border:2px solid var(--border);border-radius:20px;
+    padding:3rem;width:100%;
+    box-shadow:0 12px 24px rgba(16,24,40,.08)
+  }
+
+  .row{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:2rem;margin-bottom:2rem}
+  label{display:block;font-size:1.1rem;color:var(--muted);margin:.3rem 0 .6rem}
+  input, select, textarea{
+    width:100%;padding:1.1rem 1.2rem;border-radius:12px;border:2px solid var(--border);background:#fff;font-size:1.1rem
+  }
+  textarea{min-height:180px;resize:vertical}
+
+  .actions{display:flex;gap:1rem;flex-wrap:wrap;margin-top:1.5rem;justify-content:center}
+  .btn{
+    display:inline-block;padding:1rem 1.4rem;border-radius:12px;border:2px solid transparent;
+    font-weight:700;cursor:pointer;text-decoration:none;font-size:1.1rem
+  }
+  .btn-primary{background:var(--accent);color:#fff}
+  .btn-accent{background:var(--brand);color:#fff}
+
+  footer{background:var(--dark);color:#dbe0ff;padding:2rem;text-align:center;margin-top:3rem;border-top:5px solid var(--accent)}
+  footer p{margin:.5rem 0;font-size:1rem}
+
+  @media (max-width:640px){
+    .actions{flex-direction:column}
+    .btn{width:100%}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>ZOA TRACK - Booking Form</h1>
+  <nav>
+  </nav>
+</header>
+
+<main>
+  <h2>Reserve Your Equipment</h2>
+  <div class="panel">
+    <form id="bookingForm" novalidate>
+      <div class="row">
+        <div>
+          <label for="equipment">Equipment</label>
+          <select id="equipment" required>
+            <option value="">Select equipment</option>
+            <option>Articulated Truck 40T</option>
+            <option>Backhoe Loader</option>
+            <option>Compactor</option>
+            <option>Motor Grader</option>
+            <option>Hydraulic Excavator 20T</option>
+            <option>Wheel Excavator</option>
+            <option>Excavator with Hammer</option>
+            <option>Long Boom Excavator</option>
+            <option>Mini Excavator</option>
+            <option>Track Dozer D6</option>
+            <option>Wheel Loader 3.5m³</option>
+            <option>Hammer Backhoe</option>
+            <option>Forklift 5T</option>
+            <option>Flat Trailer</option>
+            <option>Truck & Semi-trailer</option>
+            <option>Lowbed Trailer</option>
+            <option>Water Truck</option>
+          </select>
+          <div id="priceDisplay" style="margin-top:.5rem;font-weight:bold;color:#0c3470;"></div>
+        </div>
+        <div>
+          <label for="duration">Estimated Hours</label>
+          <input type="number" id="duration" min="1" required placeholder="e.g. 8">
+        </div>
+      </div>
+
+      <div class="row">
+        <div>
+          <label for="location">Location</label>
+          <input type="text" id="location" placeholder="Project site / address" required>
+        </div>
+      </div>
+
+      <div class="row">
+        <div>
+          <label for="start">Start Date</label>
+          <input type="date" id="start" required>
+        </div>
+        <div>
+          <label for="end">End Date</label>
+          <input type="date" id="end" required>
+        </div>
+      </div>
+
+      <div class="row">
+        <div>
+          <label for="name">Full Name</label>
+          <input type="text" id="name" placeholder="Your name" required>
+        </div>
+        <div>
+          <label for="phone">Phone</label>
+          <input type="tel" id="phone" placeholder="+233 ..." required>
+        </div>
+      </div>
+
+      <div class="row">
+        <div>
+          <label for="email">Email</label>
+          <input type="email" id="email" placeholder="you@example.com" required>
+        </div>
+        <div>
+          <label for="company">Company (optional)</label>
+          <input type="text" id="company" placeholder="Company name">
+        </div>
+      </div>
+
+      <label for="payment">Payment method</label>
+      <select id="payment" name="payment" required>
+        <option value="">Select payment</option>
+        <option value="Cash">Cash</option>
+        <option value="Card">Card</option>
+        <option value="Mobile Money">Mobile Money</option>
+      </select>
+
+      <label for="notes">Additional Notes</label>
+      <textarea id="notes" placeholder="Special instructions"></textarea>
+
+      <div class="actions">
+        <button type="submit" class="btn btn-primary">Submit Booking</button>
+        <a class="btn btn-accent" href="index.html#home">Back to Home</a>
+      </div>
+
+      <p id="status" class="note" style="text-align:center;margin-top:.5rem;"></p>
+    </form>
+  </div>
+</main>
+
+<script>
+/* ---- Load prices from localStorage ---- */
+function loadPrices(){
+  return JSON.parse(localStorage.getItem("EQUIPMENT_PRICES")) || {};
+}
+
+/* ---- UI elements ---- */
+const equipmentSelect = document.getElementById('equipment');
+const priceDisplay = document.getElementById('priceDisplay');
+const form = document.getElementById('bookingForm');
+const statusEl = document.getElementById('status');
+
+/* ---- Show price when equipment changes ---- */
+equipmentSelect.addEventListener("change", () => {
+  const selected = equipmentSelect.value;
+  const prices = loadPrices();
+  priceDisplay.textContent = prices[selected]
+    ? `Daily Rate: GHS ${prices[selected].toLocaleString()}`
+    : '';
+});
+
+/* ---- Prefill equipment from query (?eq=Name) ---- */
+(function prefillFromQuery(){
+  const params = new URLSearchParams(window.location.search);
+  const eqParam = params.get('eq');
+  if (!eqParam) return;
+
+  const options = Array.from(equipmentSelect.options).map(o=>o.value);
+  if (options.includes(eqParam)) {
+    equipmentSelect.value = eqParam;
+    equipmentSelect.dispatchEvent(new Event('change'));
+  }
+})();
+
+/* ---- Form submit ---- */
+form.addEventListener('submit', (e) => {
+  e.preventDefault();
+
+  const booking = {
+    id: "B" + Date.now(),
+    equipment: document.getElementById('equipment').value,
+    duration: document.getElementById('duration').value,
+    location: document.getElementById('location').value.trim(),
+    start: document.getElementById('start').value,
+    end: document.getElementById('end').value,
+    name: document.getElementById('name').value.trim(),
+    phone: document.getElementById('phone').value.trim(),
+    email: document.getElementById('email').value.trim(),
+    company: document.getElementById('company').value.trim(),
+    payment: document.getElementById('payment').value,
+    notes: document.getElementById('notes').value.trim(),
+    status: "Pending"
+  };
+
+  // Basic validation
+  if (!booking.equipment || !booking.duration || !booking.location || !booking.start || !booking.end || !booking.name || !booking.phone || !booking.email || !booking.payment) {
+    statusEl.textContent = "Please fill out all required fields.";
+    statusEl.style.color = "crimson";
+    return;
+  }
+
+  // Validate dates
+  const startDate = new Date(booking.start);
+  const endDate = new Date(booking.end);
+  if (endDate < startDate) {
+    statusEl.textContent = "End date must be after start date.";
+    statusEl.style.color = "crimson";
+    return;
+  }
+
+  // Save to localStorage
+  const bookings = JSON.parse(localStorage.getItem("bookings")) || [];
+  bookings.push(booking);
+  localStorage.setItem("bookings", JSON.stringify(bookings));
+
+  // Mirror to admin activity
+  const adminActivity = JSON.parse(localStorage.getItem("adminActivity")) || [];
+  adminActivity.push(`[${new Date().toLocaleString()}] New booking: ${booking.id} — ${booking.name} • ${booking.equipment} • ${booking.location} • ${booking.payment}`);
+  localStorage.setItem("adminActivity", JSON.stringify(adminActivity));
+
+  // Get price for confirmation
+  const prices = loadPrices();
+  const dailyRate = prices[booking.equipment] || 0;
+
+  // Redirect to confirmation page with query params
+  const params = new URLSearchParams({
+    id: booking.id,
+    equipment: booking.equipment,
+    duration: booking.duration,
+    location: booking.location,
+    start: booking.start,
+    end: booking.end,
+    name: booking.name,
+    phone: booking.phone,
+    email: booking.email,
+    company: booking.company,
+    payment: booking.payment,
+    notes: booking.notes,
+    status: booking.status,
+    dailyRate: dailyRate
+  });
+
+  window.location.href = "booking-confirmation.html?" + params.toString();
+});
+
+/* ---- Listen for price updates from admin ---- */
+window.addEventListener('storage', (e) => {
+  if (e.key === 'EQUIPMENT_PRICES') {
+    const selected = equipmentSelect.value;
+    if (selected) {
+      equipmentSelect.dispatchEvent(new Event('change'));
+    }
+  }
+});
+</script>
+
+</body>
+</html>

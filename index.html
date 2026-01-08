@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>ZOA TRACK - Customer Portal</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<style>
+  :root{
+    --brand:#1da383; --accent:#0066cc; --green:#00d084;
+    --bg:#f7f9fc; --card:#ffffff; --text:#1f2937; --muted:#667085; --border:#e5e7eb;
+    --dark:#0b1226; --success:#27ae60; --danger:#c0392b; --info:#0066cc;
+  }
+  html{font-size:30px}
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,"Helvetica Neue",Arial,sans-serif;color:var(--text);background:var(--bg)}
+  a{text-decoration:none;}
+
+  /* Header / Nav */
+  .topbar{position:sticky;top:0;z-index:50;background:var(--brand);color:#fff;border-bottom:3px solid var(--accent)}
+  .wrap{padding:0 1rem}
+  .nav-row{display:flex;align-items:center;justify-content:flex-start;padding:.75rem 0}
+  .brand{display:flex;align-items:center;gap:.6rem}
+  .brand h1{margin:0;font-size:1.25rem;letter-spacing:.2px}
+  .brand small{opacity:.85}
+  .nav{display:flex;gap:.25rem;align-items:center;margin-left:auto}
+  .nav a{color:#fff;text-decoration:none;padding:.45rem .75rem;border-radius:6px}
+  .nav a:hover{background:#ffffff22}
+  .cta{display:flex;gap:.5rem;align-items:center}
+  .btn{display:inline-block;padding:.5rem .8rem;border-radius:6px;border:1px solid transparent;cursor:pointer}
+  .btn-outline{background:var(--accent);color:#fff;border-color:#ffffff55}
+  .btn-accent{background:var(--accent);color:#fff}
+  .hamburger{display:none;background:#ffffff22;color:#fff;border:1px solid #ffffff55}
+
+  /* Mobile nav drawer */
+  .drawer{display:none;flex-direction:column;gap:.25rem;padding:.5rem 0}
+  .drawer a{background:#ffffff1a;border:1px solid #ffffff33;border-radius:6px;padding:.45rem .75rem;color:#fff}
+
+  /* Hero */
+  .hero{
+    background:url('https://th.bing.com/th/id/OIP.jhSc0buM-kihJLRAtq6_IAHaE-?w=286&h=193&c=7&r=0&o=7&dpr=1.5&pid=1.7&rm=3') center/cover no-repeat;
+    color:#fff; text-align:center; padding:4rem 1rem; position:relative;
+  }
+  .hero::after{content:"";position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,.35),rgba(0,0,0,.45))}
+  .hero .inner{position:relative;z-index:1}
+  .hero h2{margin:0 0 .5rem;font-size:2rem}
+  .hero p{margin:.30rem 0 2rem;color:#e5e7eb}
+  .hero .btn{margin:.25rem}
+  .btn-outline{border: none}
+
+  /* Sections */
+  section{padding:2rem 0}
+  h3{margin:.25rem 0 1rem;font-size:1.3rem}
+
+  /* Catalog grid + flip cards */
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(350px,1fr));gap:1rem}
+  .card{perspective:1000px}
+  .flip{position:relative;transform-style:preserve-3d;transition:transform .5s}
+  .card:hover .flip{transform:rotateY(180deg)}
+  .face{
+    position:relative; width:100%; height:500px; border:1px solid var(--border); border-radius:12px; overflow:hidden; background:var(--card);
+    backface-visibility:hidden;
+    box-shadow:0 8px 18px rgba(16,24,40,.06);
+  }
+  .front img{width:100%;height:270px;object-fit:cover;background:#eef3ff}
+  .front .body, .back .body{padding:.8rem;display:grid;gap:.35rem}
+  .title{font-weight:600}
+  .meta{font-size:.9rem;color:var(--muted)}
+  .rate{font-weight:700}
+  .actions{display:flex;gap:.5rem;margin-top:.35rem}
+  .back{position:absolute;inset:0;transform:rotateY(180deg)}
+  .thumb{
+    width:100%;height:270px;display:flex;align-items:center;justify-content:center;
+    background:linear-gradient(135deg,#cfe7ff,#eaf3ff);color:#0c3470;font-weight:800;font-size:1.1rem;
+  }
+  .btn-book{background:var(--accent);color:#fff}
+  .btn-light{background:#fff;color:var(--text);border:1px solid var(--border)}
+
+  /* About / Services */
+  .features{display:flex; justify-content:space-around; gap:1rem}
+  .feature{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem; flex:1}
+  .feature strong{display:block;margin-bottom:.25rem}
+  .meta{font-size:25px;}
+
+  /* Contact */
+  .contact{display:grid;grid-template-columns:1.2fr .8fr;gap:1rem}
+  .panel{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem}
+  label{display:block;font-size:.9rem;color:var(--muted);margin:.35rem 0 .25rem}
+  input, textarea{width:100%;padding:.8rem 1rem;border-radius:8px;border:1px solid var(--border);background:#fff;font-size:1.0rem}
+  textarea{min-height:140px;resize:vertical}
+  .btn-send{background:var(--green);color:#083b2b;
+    border:1px solid #00d084;
+    font-size: 25px;
+    cursor:pointer;}
+
+  /* Footer */
+  footer{background:var(--dark);color:#dbe0ff;border-top:4px solid var(--accent)}
+  .cols{display:grid;grid-template-columns:2fr 2fr 1fr;gap:1rem;padding:1rem 2rem}
+  footer a{color:#dbe0ff;text-decoration:none}
+  .copy{border-top:1px solid #ffffff1a;padding:1rem 2rem;color:#b9c0ff;
+  border-bottom:1px solid #ffffff1a;}
+
+  /* Responsive */
+  @media (max-width:940px){
+    .contact{grid-template-columns:1fr}
+  }
+  @media (max-width:768px){
+    .hamburger{display:inline-block}
+    .nav{display:none}
+    .drawer{display:flex}
+    .hero{padding:2.2rem 1rem}
+    .hero h2{font-size:1.45rem}
+  }
+  @media (max-width:600px){
+    .grid{grid-template-columns:repeat(auto-fill,minmax(180px,1fr))}
+    .face{height:460px}
+    .front img{height:250px}
+    .thumb{height:250px;font-size:1rem}
+  }
+  @media (max-width:600px){
+    .grid{grid-template-columns:repeat(auto-fill,minmax(250px,1fr))}
+    .face{height:440px}
+    .front img{height:240px}
+    .thumb{height:240px;font-size:1rem}
+  }
+</style>
+</head>
+<body>
+
+<!-- Topbar -->
+<div class="topbar">
+  <div class="wrap">
+    <div class="nav-row">
+      <div class="brand">
+        <h1>ZOA TRACK</h1>
+      </div>
+      <div class="nav" id="navLinks">
+        <a href="#home">Home</a>
+        <a href="#catalog">Equipment</a>
+        <a href="booking.html">Customer</a>
+        <a href="#about">About</a>
+        <a href="#contact">Contact</a>
+      </div>
+      <div class="cta">
+        <button class="btn hamburger" id="menuBtn">Menu</button>
+      </div>
+    </div>
+    <div class="drawer" id="drawer">
+      <a href="#home">Home</a>
+      <a href="#catalog">Equipment</a>
+      <a href="booking.html">Customer</a>
+      <a href="#about">About</a>
+      <a href="#contact">Contact</a>
+    </div>
+  </div>
+</div>
+
+<!-- Hero -->
+<section class="hero" id="home">
+  <div class="inner wrap">
+    <h2>Book dependable equipment — fast and simple</h2>
+    <p>Browse machines, view rates, and jump straight to booking.</p>
+    <a class="btn btn-accent" href="#catalog">Browse equipment</a>
+    <a class="btn btn-accent" href="booking.html">Book now</a>
+    <a class="btn btn-outline" href="#contact">Customer support</a>
+  </div>
+</section>
+
+<!-- Catalog -->
+<section id="catalog">
+  <div class="wrap">
+    <h3>Available Equipment</h3>
+    <div class="grid" id="catalogGrid" aria-live="polite"></div>
+  </div>
+</section>
+
+<!-- About / Services -->
+<section id="about">
+  <div class="wrap">
+    <h3>About ZOA TRACK</h3>
+    <div class="panel">
+      <p>ZOA TRACK provides reliable equipment rentals with transparent rates and a streamlined booking experience. We focus on uptime, safety, and responsive support for construction, mining, logistics, and infrastructure projects.</p>
+    </div>
+
+    <h3>Our services</h3>
+    <div class="features">
+      <div class="feature"><strong>Delivery</strong><span class="meta">Timely delivery to your site across Accra and beyond.</span></div>
+      <div class="feature"><strong>Maintenance</strong><span class="meta">Well-maintained fleet to reduce downtime.</span></div>
+      <div class="feature"><strong>Support</strong><span class="meta">Responsive assistance during your rental period.</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- Contact -->
+<section id="contact">
+  <div class="wrap">
+    <h3>Contact us</h3>
+    <div class="contact">
+      <div class="panel">
+        <p><strong>Address:</strong> Dzowulu Yard, Accra </p>
+        <p><strong>Phone:</strong> +233 24 401 5949</p>
+        <p><strong>Email:</strong> wisdomagbey@gmail.com</p>
+        <form id="contactForm" style="margin-top:.75rem">
+          <label for="name">Name</label>
+          <input id="name" type="text" placeholder="Your name">
+          <label for="email">Email</label>
+          <input id="email" type="email" placeholder="you@example.com">
+          <label for="msg">Message</label>
+          <textarea id="msg" placeholder="How can we help?"></textarea>
+          <div style="margin-top:.5rem">
+            <button class="btn btn-send" type="submit">Send message</button>
+          </div>
+          <p id="contactStatus" class="meta" style="margin-top:.5rem"></p>
+        </form>
+      </div>
+      <div class="panel">
+        <h4 style="margin:.25rem 0">Quick links</h4>
+        <p><a href="#catalog">Browse equipment</a></p>
+        <p><a href="booking.html">Bookings</a></p>
+        <p><a href="#about">About our services</a></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <div class="wrap cols">
+    <div>
+      <h4 style="margin:.25rem 0">ZOA TRACK</h4>
+      <p>Digitized rentals with dependable machines and customer-first support.</p>
+    </div>
+    <div>
+      <h4 style="margin:.25rem 0">Contact</h4>
+      <p>Dzowulu Yard, Accra</p>
+      <p>+233 24 401 5949</p>
+    </div>
+    <div>
+      <h4 style="margin:.25rem 0">Links</h4>
+      <p><a href="#catalog">Equipment</a></p>
+      <p><a href="booking.html">Bookings</a></p>
+      <p><a href="#contact">Support</a></p>
+    </div>
+  </div>
+  <div class="wrap copy">© 2026 ZOA TRACK — All rights reserved.</div>
+</footer>
+
+<script>
+/* ------------ Mobile menu ------------ */
+const menuBtn = document.getElementById('menuBtn');
+const drawer = document.getElementById('drawer');
+menuBtn?.addEventListener('click', () => {
+  const open = drawer.style.display === 'flex';
+  drawer.style.display = open ? 'none' : 'flex';
+});
+
+/* ------------ Equipment Catalog (SYNCED NAMES) ------------ */
+const CATALOG = [
+  {id:'EQ-001', title:'Articulated Truck 40T', category:'Articulated Trucks', 
+    img:'https://kezy-bans.com/wp-content/uploads/2021/06/cat_articulated.png',
+    desc:'High-capacity truck for quarry and mining haulage.'},
+  {id:'EQ-002', title:'Backhoe Loader', category:'Backhoe', 
+    img:'https://kezy-bans.com/wp-content/uploads/2021/06/cat_backhoe.png',
+    desc:'Versatile machine for digging, trenching, and loading.'},
+  {id:'EQ-003', title:'Compactor', category:'Compactors', 
+    img:'https://kezy-bans.com/wp-content/uploads/2021/06/cat_compactor.png',
+    desc:'Soil compaction for roads and foundations.'},
+  {id:'EQ-004', title:'Motor Grader', category:'Motor Graders', 
+    img:'https://kezy-bans.com/wp-content/uploads/2021/06/cat_motorgrader-300x209.png',
+    desc:'Precision grading and roadbed shaping.'},
+  {id:'EQ-005', title:'Hydraulic Excavator 20T', category:'Hydraulic Excavators', 
+    img:'https://kezy-bans.com/wp-content/uploads/2021/06/cat_hydrauexcal.png',
+    desc:'Reliable excavator with multiple boom configurations.'},
+  {id:'EQ-006', title:'Wheel Excavator', category:'Wheel Excavators', 
+    img:'https://kezy-bans.com/wp-content/uploads/2021/06/cat_wheelexcal.png',
+    desc:'Mobile excavator ideal for urban works on paved surfaces.'},
+  {id:'EQ-007', title:'Excavator with Hammer', category:'Excavators with Hammer', 
+    img:'https://kezy-bans.com/wp-content/uploads/2021/06/cat_excavham.png',
+    desc:'Demolition and rock breaking with hydraulic hammer.'},
+  {id:'EQ-008', title:'Long Boom Excavator', category:'Long Boom Excavators', 
+    img:'https://kezy-bans.com/wp-content/uploads/2021/06/cat_longexcav.png',
+    desc:'Extended reach for dredging and deep excavation.'},
+  {id:'EQ-009', title:'Mini Excavator', category:'Mini Excavators', 
+    img:'https://kezy-bans.com/wp-content/uploads/2021/06/cat_miniexcav.png',
+    desc:'Compact machine for tight spaces and urban sites.'},
+  {id:'EQ-010', title:'Track Dozer D6', category:'Track Dozers', 
+    img:'https://kezy-bans.com/wp-content/uploads/2021/06/cat_trackdoz.png',
+    desc:'Mid-size dozer for site preparation and grading.'},
+  {id:'EQ-011', title:'Wheel Loader 3.5m³', category:'Wheel Loaders', 
+    img:'https://kezy-bans.com/wp-content/uploads/2021/06/cat_wheelload.png',
+    desc:'High breakout force with quick-coupler.'},
+  {id:'EQ-012', title:'Hammer Backhoe', category:'Hammer Backhoe', 
+    img:'https://kezy-bans.com/wp-content/uploads/2021/06/cat_backhoe.png',
+    desc:'Backhoe fitted with hydraulic hammer for light demolition.'},
+  {id:'EQ-013', title:'Forklift 5T', category:'Forklifts', 
+    img:'https://kezy-bans.com/wp-content/uploads/2021/06/cat_forklift.png',
+    desc:'Material handling in warehouses and yards.'},
+  {id:'EQ-014', title:'Flat Trailer', category:'Flat Trailers', 
+    img:'https://kezy-bans.com/wp-content/uploads/2021/06/cat_flattrailer.png',
+    desc:'Flatbed trailer for general cargo transport.'},
+  {id:'EQ-015', title:'Truck & Semi-trailer', category:'Truck & Semi-trailers', 
+    img:'https://kezy-bans.com/wp-content/uploads/2021/06/cat_truck.png',
+    desc:'Long-haul truck with semi-trailer options.'},
+  {id:'EQ-016', title:'Lowbed Trailer', category:'Lowbed Trailers', 
+    img:'https://kezy-bans.com/wp-content/uploads/2021/06/cat_lowbed.png',
+    desc:'Transport heavy equipment safely between sites.'},
+  {id:'EQ-017', title:'Water Truck', category:'Water Trucks', 
+    img:'https://kezy-bans.com/wp-content/uploads/2021/06/cat_watertruck.png',
+    desc:'Dust suppression and site watering.'},
+];
+
+const grid = document.getElementById('catalogGrid');
+
+function initials(title){
+  const parts = title.split(' ');
+  return (parts[0]?.[0]||'E') + (parts[1]?.[0]||'Q');
+}
+
+function loadPrices(){
+  return JSON.parse(localStorage.getItem("EQUIPMENT_PRICES")) || {};
+}
+
+function createCard(item){
+  const prices = loadPrices();
+  const card = document.createElement('div');
+  card.className = 'card';
+  const flip = document.createElement('div');
+  flip.className = 'flip';
+
+  const front = document.createElement('div');
+  front.className = 'face front';
+
+  const img = document.createElement('img');
+  img.alt = item.title;
+  img.src = item.img;
+  img.onerror = () => {
+    const t = document.createElement('div');
+    t.className = 'thumb';
+    t.textContent = initials(item.title).toUpperCase();
+    img.replaceWith(t);
+  };
+
+  const bodyFront = document.createElement('div');
+  bodyFront.className = 'body';
+  bodyFront.innerHTML = `
+    <div class="title">${item.title}</div>
+    <div class="meta">${item.category}</div>
+    <div class="actions">
+      <a class="btn btn-book" href="booking.html?eq=${encodeURIComponent(item.title)}">Book</a>
+      <a class="btn btn-light" href="booking.html?eq=${encodeURIComponent(item.title)}">Details</a>
+    </div>
+  `;
+
+  const back = document.createElement('div');
+  back.className = 'face back';
+  const bodyBack = document.createElement('div');
+  bodyBack.className = 'body';
+  bodyBack.innerHTML = `
+    <div class="title">${item.title}</div>
+    <div class="meta">${item.category}</div>
+    <p>${item.desc}</p>
+    <div class="rate">Daily Rate: GHS ${(prices[item.title] || 0).toLocaleString()}</div>
+    <div class="actions">
+      <a class="btn btn-book" href="booking.html?eq=${encodeURIComponent(item.title)}">Book</a>
+    </div>
+  `;
+
+  front.appendChild(img);
+  front.appendChild(bodyFront);
+  back.appendChild(bodyBack);
+  flip.appendChild(front);
+  flip.appendChild(back);
+  card.appendChild(flip);
+  return card;
+}
+
+function renderCatalog(){
+  grid.innerHTML = '';
+  CATALOG.forEach(item => grid.appendChild(createCard(item)));
+}
+
+// Initial render
+renderCatalog();
+
+// Listen for price changes from admin
+window.addEventListener('storage', (e) => {
+  if (e.key === 'EQUIPMENT_PRICES') {
+    renderCatalog();
+  }
+});
+
+/* ------------ Contact form (simulation) ------------ */
+const contactForm = document.getElementById('contactForm');
+const contactStatus = document.getElementById('contactStatus');
+contactForm?.addEventListener('submit', (e)=>{
+  e.preventDefault();
+  const name = document.getElementById('name').value.trim();
+  const email = document.getElementById('email').value.trim();
+  const msg = document.getElementById('msg').value.trim();
+  if(!name || !email || !msg){
+    contactStatus.textContent = 'Please fill out all fields.';
+    return;
+  }
+  // Store message in localStorage
+  let messages = JSON.parse(localStorage.getItem('contactMessages')) || [];
+  messages.push({name, email, msg, date: new Date().toISOString()});
+  localStorage.setItem('contactMessages', JSON.stringify(messages));
+  contactStatus.textContent = 'Thanks! We will reach out shortly.';
+  contactForm.reset();
+});
+</script>
+</body>
+</html>
